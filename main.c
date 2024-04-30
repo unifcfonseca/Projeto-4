@@ -1,7 +1,15 @@
 #include <stdio.h>
+#include "banco.h"  
 
 int main() {
-int escolha,pos;
+
+
+  Banco banco[TOTAL];
+
+
+  
+int escolha;
+
 
 do {
 
