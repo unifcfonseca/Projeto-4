@@ -1,7 +1,8 @@
 #include <stdio.h>
 
 int main() {
-int escolha;
+
+int pos , escolha;
 
 do {
 
@@ -50,7 +51,6 @@ default:
 printf("Opção inválida. Por favor, escolha uma opção válida.\n");
 break;
 }
-
 } while (escolha != 0);
 
 return 0;
