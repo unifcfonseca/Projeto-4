@@ -1,8 +1,8 @@
 #include "banco.h"
 #include <stdio.h>
-#include <string.h>>
+#include <string.h>
 
-ERROS NovoCliente(Banco *banco, int *pos){
+ERROS NovoCliente(Banco banco[], int *pos){
 
   if(*pos==TOTAL){
 
@@ -18,10 +18,13 @@ ERROS NovoCliente(Banco *banco, int *pos){
   }
   banco[*pos].cpf=cpf;
 
+  clearBuffer();
+  
   printf("Digite o nome do cliente: ");
   fgets(banco[*pos].nome, NOME_MAX, stdin);
     banco[*pos].nome[strcspn(banco[*pos].nome, "\n")] = '\0';
 
+  
   printf("Digite o tipo da conta do cliente: ");
   fgets(banco[*pos].tipo, TIPO_CONTA_MAX, stdin);
     banco[*pos].tipo[strcspn(banco[*pos].tipo, "\n")] = '\0';
@@ -29,6 +32,7 @@ ERROS NovoCliente(Banco *banco, int *pos){
   printf("Digite o saldo inicial da conta do cliente: ");
   scanf("%f",&banco[*pos].saldo);
   
+  clearBuffer();
   printf("Digite a senha da conta do cliente: ");
   fgets(banco[*pos].senha, SENHA_MAX, stdin);
   banco[*pos].senha[strcspn(banco[*pos].senha, "\n")] = '\0';
@@ -38,11 +42,11 @@ ERROS NovoCliente(Banco *banco, int *pos){
   return OK;
   
 }
-ERROS DeletarCliente(Banco *banco, int *pos){
+ERROS DeletarCliente(Banco banco[], int *pos){
   
 }
 
-ERROS ListarClientes(){
+ERROS ListarClientes(Banco banco[], int *pos){
   if (*pos == 0){
     return SEM_CLIENTES;
   }
@@ -52,29 +56,33 @@ ERROS ListarClientes(){
     printf("Nome: %s\t", banco[i].nome);
     printf("CPF: %ld\n", banco[i].cpf);
     printf("Tipo de Conta: %s\t", banco[i].tipo);
-    printf("Saldo: %s\n\n", banco[i].saldo); 
+    printf("Saldo: %.2f\n\n", banco[i].saldo); 
   }
 
   return OK;
 
 
 }
-ERROS Debito(Banco *banco, int *pos){
+ERROS Debito(Banco banco[], int *pos){
 
 }
-ERROS Deposito(Banco *banco, int *pos){
+ERROS Deposito(Banco banco[], int *pos){
 
   
 }
-ERROS Transferencia(Banco *banco, int *pos){
+ERROS Transferencia(Banco banco[], int *pos){
   
 }
-ERROS Extrato(Banco *banco, int *pos){
+ERROS Extrato(Banco banco[], int *pos){
   
 }
-ERROS Salvar(Banco *banco, int *pos){
+ERROS Salvar(Banco banco[], int *pos){
   
 }
-ERROS Carregar(Banco *banco, int *pos){
+ERROS Carregar(Banco banco[], int *pos){
   
+}
+void clearBuffer() {
+  int c;
+  while ((c = getchar()) != '\n' && c != EOF);
 }

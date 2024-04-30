@@ -2,7 +2,9 @@
 #include "banco.h"  
 
 int main() {
-
+ERROS erro;
+funcao fs[] = {NovoCliente, DeletarCliente, ListarClientes, Debito, Deposito, Transferencia, Extrato, Salvar, Carregar};
+  
 int pos , escolha;
 
 Banco banco[TOTAL];
@@ -53,6 +55,9 @@ break;
 default:
 printf("Opção inválida. Por favor, escolha uma opção válida.\n");
 break;
+}
+if(escolha>0 && escolha<8){
+  erro = fs[escolha-1](banco, &pos);
 }
 } while (escolha != 0);
 
