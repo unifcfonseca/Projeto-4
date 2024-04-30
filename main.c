@@ -3,13 +3,9 @@
 
 int main() {
 
+int pos , escolha;
 
-  Banco banco[TOTAL];
-
-
-  
-int escolha;
-
+Banco banco[TOTAL];
 
 do {
 
@@ -58,7 +54,6 @@ default:
 printf("Opção inválida. Por favor, escolha uma opção válida.\n");
 break;
 }
-
 } while (escolha != 0);
 
 return 0;
