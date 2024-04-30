@@ -7,6 +7,9 @@ ERROS DeletarCliente(){
 ERROS ListarClientes(){
   
 }
+ERROS Debito(){
+
+}
 ERROS Deposito(){
   
 }
@@ -14,9 +17,6 @@ ERROS Transferencia(){
   
 }
 ERROS Extrato(){
-  
-}
-ERROS Debito(){
   
 }
 ERROS Salvar(){
