@@ -1,3 +1,4 @@
+
 #define NOME_MAX 70
 #define TIPO_CONTA_MAX 5
 #define SENHA_MAX 20
@@ -22,14 +23,15 @@ int Valor;
 
 typedef enum {OK, MAX_CLIENTES, SEM_CLIENTES, NAO_ENCONTRADO, ABRIR, FECHAR, ESCREVER, LER} ERROS;
 
+
 typedef ERROS (*funcao)();
 
-ERROS NovoCliente();
-ERROS DeletarCliente();
-ERROS ListarClientes();
-ERROS Debito();
-ERROS Deposito();
-ERROS Transferencia();
-ERROS Extrato();
-ERROS Salvar();
-ERROS Carregar();
+ERROS NovoCliente(Banco *banco, int *pos);
+ERROS DeletarCliente(Banco *banco, int *pos);
+ERROS ListarClientes(Banco *banco, int *pos);
+ERROS Debito(Banco *banco, int *pos);
+ERROS Deposito(Banco *banco, int *pos);
+ERROS Transferencia(Banco *banco, int *pos);
+ERROS Extrato(Banco *banco, int *pos);
+ERROS Salvar(Banco *banco, int *pos);
+ERROS Carregar(Banco *banco, int *pos);

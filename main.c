@@ -3,11 +3,13 @@
 
 int main() {
 
+
   Banco banco[TOTAL];
 
 
   
 int escolha;
+
 
 do {
 
