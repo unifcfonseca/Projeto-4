@@ -2,13 +2,23 @@
 #include "banco.h"  
 
 int main() {
-ERROS erro;
 funcao fs[] = {NovoCliente, DeletarCliente, ListarClientes, Debito, Deposito, Transferencia, Extrato, Salvar, Carregar};
   
 int pos , escolha;
-
 Banco banco[TOTAL];
-
+    ERROS erro = fs[8](banco, &pos);
+  if(erro != OK){
+      printf("Erro ao executar a operação.\n");
+      printErro(erro);
+      printf("\nSe voce continuar, todos os dados serão sobreescritos.\nDeseja continuar? (1-sim, 2-nao)\n");
+      scanf("%d", &escolha);
+      if(escolha == 1){
+        pos = 0;
+      }else{
+        return 0;
+      }
+  }
+  
 do {
 
 printf("\n===== Menu Principal =====\n");
@@ -61,5 +71,7 @@ if(escolha>0 && escolha<8){
 }
 } while (escolha != 0);
 
+  erro = fs[escolha-1](banco, &pos);
+  
 return 0;
 }
