@@ -39,3 +39,5 @@ ERROS Salvar(Banco banco[], int *pos);
 ERROS Carregar(Banco banco[], int *pos);
 
 void clearBuffer();
+
+void printErro(ERROS e);

@@ -68,10 +68,18 @@ break;
 }
 if(escolha>0 && escolha<8){
   erro = fs[escolha-1](banco, &pos);
+
+    if(erro !=OK){
+    printf("Erro ao executar a operação.\n");
+    printErro(erro);
+  
 }
 } while (escolha != 0);
 
   erro = fs[escolha-1](banco, &pos);
   
 return 0;
+
+  
 }
+

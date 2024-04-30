@@ -170,3 +170,37 @@ void clearBuffer() {
   int c;
   while ((c = getchar()) != '\n' && c != EOF);
 }
+
+void printErro(ERROS e){
+  switch(e){
+    case 0:
+    printf("OK\n");
+    break;
+      case 1:
+    printf("Maximo de clientes atingido!\n");
+    break;
+        case 2:
+    printf("Sem clientes no arquivo!\n");
+    break;
+          case 3:
+    printf("Cliente não encontrado!\n");
+    break;
+            case 4:
+    printf("Erro ao abrir o arquivo!\n");
+    break;
+              case 5:
+    printf("Erro ao fechar o arquivo!\n");
+    break;
+                case 6:
+    printf("Erro ao escrever no arquivo!\n");
+    break;
+                  case 7:
+    printf("Erro ao ler o arquivo!\n");
+    break;
+                    case 8:
+    printf("Cliente já existente!\n");
+    break;
+    default:
+    printf("Erro desconhecido!\n");
+  }
+}
