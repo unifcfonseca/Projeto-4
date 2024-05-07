@@ -2,68 +2,66 @@
 #include <stdio.h>
 #include <string.h>
 
-ERROS NovoCliente(Banco banco[], int *pos){
+ERROS NovoCliente(Banco banco[], int *pos) {
 
-  if(*pos==TOTAL){
+  if (*pos == TOTAL) {
 
     return MAX_CLIENTES;
   }
   printf("Digite o cpf do cliente: ");
   long cpf;
-  scanf("%ld",&cpf);
-  for(int i = 0;i<*pos;i++){
-    if(banco[i].cpf==cpf){
+  scanf("%ld", &cpf);
+  for (int i = 0; i < *pos; i++) {
+    if (banco[i].cpf == cpf) {
       return CLIENTE_EXISTENTE;
     }
   }
-  banco[*pos].cpf=cpf;
+  banco[*pos].cpf = cpf;
 
   clearBuffer();
-  
+
   printf("Digite o nome do cliente: ");
   fgets(banco[*pos].nome, NOME_MAX, stdin);
-    banco[*pos].nome[strcspn(banco[*pos].nome, "\n")] = '\0';
+  banco[*pos].nome[strcspn(banco[*pos].nome, "\n")] = '\0';
 
-  
   printf("Digite o tipo da conta do cliente: \n");
   fgets(banco[*pos].tipo, TIPO_CONTA_MAX, stdin);
-    banco[*pos].tipo[strcspn(banco[*pos].tipo, "\n")] = '\0';
+  banco[*pos].tipo[strcspn(banco[*pos].tipo, "\n")] = '\0';
 
   printf("Digite o saldo inicial da conta do cliente: \n");
-  scanf("%f",&banco[*pos].saldo);
-  
+  scanf("%f", &banco[*pos].saldo);
+
   clearBuffer();
   printf("Digite a senha da conta do cliente: ");
   fgets(banco[*pos].senha, SENHA_MAX, stdin);
   banco[*pos].senha[strcspn(banco[*pos].senha, "\n")] = '\0';
 
-  *pos+=1;
-  Salvar(banco,  pos);
+  *pos += 1;
+  Salvar(banco, pos);
   return OK;
-  
 }
-ERROS DeletarCliente(Banco banco[], int *pos){
-  if(*pos==0){
+ERROS DeletarCliente(Banco banco[], int *pos) {
+  if (*pos == 0) {
     printf("nenhum cliente para apagar\n");
-      return SEM_CLIENTES;  
+    return SEM_CLIENTES;
   }
   long cpf_deletar;
-  int pos_DELETAR=-1;
-  printf("entre com o cliente para deletar\n");
+  int pos_DELETAR = -1;
+  printf("entre com o cpf para deletar o cliente\n");
   scanf("%ld", &cpf_deletar);
 
-  for(int i = 0; i < *pos; i++){
-    if(banco[i].cpf == cpf_deletar){
+  for (int i = 0; i < *pos; i++) {
+    if (banco[i].cpf == cpf_deletar) {
       pos_DELETAR = i;
       break;
     }
   }
-  if(pos_DELETAR == -1){
+  if (pos_DELETAR == -1) {
     printf("cliente com cpf %ld não encontrado\n", cpf_deletar);
     return NAO_ENCONTRADO;
   }
 
-  for(int i = pos_DELETAR; i < *pos - 1; i++){
+  for (int i = pos_DELETAR; i < *pos - 1; i++) {
     strcpy(banco[i].nome, banco[i + 1].nome);
     strcpy(banco[i].tipo, banco[i + 1].tipo);
     strcpy(banco[i].senha, banco[i + 1].senha);
@@ -73,134 +71,162 @@ ERROS DeletarCliente(Banco banco[], int *pos){
 
   *pos = *pos - 1;
 
-  
-  Salvar(banco,  pos);
+  Salvar(banco, pos);
   return OK;
-
 }
 
-ERROS ListarClientes(Banco banco[], int *pos){
-  if (*pos == 0){
+ERROS ListarClientes(Banco banco[], int *pos) {
+  if (*pos == 0) {
     return SEM_CLIENTES;
   }
 
-  for (int i = 0; i < *pos; i++){
-    printf("Posição: %d\n", i+1);
+  for (int i = 0; i < *pos; i++) {
+    printf("Posição: %d\n", i + 1);
     printf("Nome: %s\t", banco[i].nome);
     printf("CPF: %ld\n", banco[i].cpf);
     printf("Tipo de Conta: %s\t", banco[i].tipo);
-    printf("Saldo: %.2f\n\n", banco[i].saldo); 
+    printf("Saldo: %.2f\n\n", banco[i].saldo);
   }
 
-
-  ERROS erro = Salvar(banco,  pos);
-  if(erro != OK){
+  ERROS erro = Salvar(banco, pos);
+  if (erro != OK) {
     return erro;
   }
   return OK;
 }
-ERROS Debito(Banco banco[], int *pos){
+ERROS Debito(Banco banco[], int *pos) {
+  if (*pos == 0) {
+    return SEM_CLIENTES;
+  }
 
-  ERROS erro = Salvar(banco,  pos);
-  if(erro != OK){
+  long cpf_debito;
+  int pos_DEBITO = -1;
+  printf("Digite o CPF do cliente para debitar: ");
+  scanf("%ld", &cpf_debito);
+
+  for (int i = 0; i < *pos; i++) {
+    if (banco[i].cpf == cpf_debito) {
+      pos_DEBITO = i;
+      break;
+    }
+  }
+
+  if (pos_DEBITO == -1) {
+    printf("Cliente com CPF %ld não encontrado\n", cpf_debito);
+    return NAO_ENCONTRADO;
+  }
+
+  float valor_debitar;
+  printf("Digite o valor a ser debitado da conta: ");
+  scanf("%f", &valor_debitar);
+
+  if (valor_debitar > banco[pos_DEBITO].saldo) {
+    printf("Saldo insuficiente para realizar o débito\n");
+    return OK;
+  } 
+
+  banco[pos_DEBITO].saldo -= valor_debitar;
+
+  printf("Débito de %.2f realizado com sucesso na conta do cliente %ld\n",
+         valor_debitar, banco[pos_DEBITO].cpf);
+
+  return OK;
+}
+
+ERROS Deposito(Banco banco[], int *pos) {
+
+  ERROS erro = Salvar(banco, pos);
+  if (erro != OK) {
     return erro;
   }
   return OK;
 }
-ERROS Deposito(Banco banco[], int *pos){
+ERROS Transferencia(Banco banco[], int *pos) {
 
-  ERROS erro = Salvar(banco,  pos);
-  if(erro != OK){
+  ERROS erro = Salvar(banco, pos);
+  if (erro != OK) {
     return erro;
   }
   return OK;
 }
-ERROS Transferencia(Banco banco[], int *pos){
+ERROS Extrato(Banco banco[], int *pos) {
 
-  ERROS erro = Salvar(banco,  pos);
-  if(erro != OK){
+  ERROS erro = Salvar(banco, pos);
+  if (erro != OK) {
     return erro;
   }
   return OK;
 }
-ERROS Extrato(Banco banco[], int *pos){
-
-  ERROS erro = Salvar(banco,  pos);
-  if(erro != OK){
-    return erro;
-  }
-  return OK;
-}
-ERROS Salvar(Banco banco[], int *pos){
+ERROS Salvar(Banco banco[], int *pos) {
   FILE *f = fopen("banco.bin", "wb");
-  if(f == NULL)
-      return ABRIR;
+  if (f == NULL)
+    return ABRIR;
   int qtd = fwrite(banco, TOTAL, sizeof(Banco), f);
-  if(qtd == 0)
-      return ESCREVER;
+  if (qtd == 0)
+    return ESCREVER;
 
   qtd = fwrite(pos, 1, sizeof(int), f);
-  if(qtd == 0)
-      return ESCREVER;
+  if (qtd == 0)
+    return ESCREVER;
 
-  if(fclose(f))
-      return FECHAR;
-
+  if (fclose(f))
+    return FECHAR;
 
   return OK;
 }
-ERROS Carregar(Banco banco[], int *pos){
+ERROS Carregar(Banco banco[], int *pos) {
   FILE *f = fopen("banco.bin", "rb");
-  if(f == NULL)
-      return ABRIR;
+  if (f == NULL)
+    return ABRIR;
 
   int qtd = fread(banco, TOTAL, sizeof(Banco), f);
-  if(qtd == 0)
-      return LER;
+  if (qtd == 0)
+    return LER;
 
   qtd = fread(pos, 1, sizeof(int), f);
-  if(qtd == 0)
-      return LER;
+  if (qtd == 0)
+    return LER;
 
-  if(fclose(f))
-      return FECHAR;
+  if (fclose(f))
+    return FECHAR;
   return OK;
 }
 void clearBuffer() {
   int c;
-  while ((c = getchar()) != '\n' && c != EOF);
+  while ((c = getchar()) != '\n' && c != EOF)
+    ;
 }
 
-void printErro(ERROS e){
-  switch(e){
-    case 0:
+void printErro(ERROS e) {
+  switch (e) {
+  case 0:
     printf("OK\n");
     break;
-      case 1:
+  case 1:
     printf("Maximo de clientes atingido!\n");
     break;
-        case 2:
+  case 2:
     printf("Sem clientes no arquivo!\n");
     break;
-          case 3:
+  case 3:
     printf("Cliente não encontrado!\n");
     break;
-            case 4:
+  case 4:
     printf("Erro ao abrir o arquivo!\n");
     break;
-              case 5:
+  case 5:
     printf("Erro ao fechar o arquivo!\n");
     break;
-                case 6:
+  case 6:
     printf("Erro ao escrever no arquivo!\n");
     break;
-                  case 7:
+  case 7:
     printf("Erro ao ler o arquivo!\n");
     break;
-                    case 8:
+  case 8:
     printf("Cliente já existente!\n");
     break;
-    default:
+  default:
     printf("Erro desconhecido!\n");
   }
 }
