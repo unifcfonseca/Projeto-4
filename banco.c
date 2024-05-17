@@ -150,11 +150,43 @@ ERROS Debito(Banco banco[], int *pos) {
 }
 
 ERROS Deposito(Banco banco[], int *pos) {
+   if (*pos == 0) {
+    return SEM_CLIENTES;
+  }
+  long cpf_deposito;
+  int pos_DEPOSITO=-1;
+
+  printf("Digite o CPF do cliente para depositar: ");
+  scanf("%ld",&cpf_deposito);
+
+  for(int i=0;i<*pos;i++){
+    if(banco[i].cpf == cpf_deposito){
+      pos_DEPOSITO=i;
+      break;
+    }
+  }
+
+  if(pos_DEPOSITO ==-1){
+    printf("cliente com CPF %ld não encontrado\n",cpf_deposito);
+    return NAO_ENCONTRADO;
+  }
+
+  float Valor_deposito;
+  printf("Digite o valor a ser depositado da conta :");
+  scanf("%f",&Valor_deposito);
+
+  banco[pos_DEPOSITO].saldo += Valor_deposito;
+
+  printf("Deposito de %.2f realizado com sucesso na conta do cliente %ld\n",
+         Valor_deposito, banco[pos_DEPOSITO].cpf);
 
   ERROS erro = Salvar(banco, pos);
   if (erro != OK) {
     return erro;
   }
+  
+  SalvarExtrato(banco, pos,  cpf_deposito,  2,  Valor_deposito);
+
   return OK;
 }
 ERROS Transferencia(Banco banco[], int *pos) {
