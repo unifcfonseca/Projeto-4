@@ -36,6 +36,12 @@ ERROS NovoCliente(Banco banco[], int *pos) {
   fgets(banco[*pos].tipo, TIPO_CONTA_MAX, stdin);
   banco[*pos].tipo[strcspn(banco[*pos].tipo, "\n")] = '\0';
 
+  while(strcmp(banco[*pos].tipo, "Plus")!=0 && strcmp(banco[*pos].tipo, "Comum")!=0 ){
+    printf("Entrada Invalida!\nDigite o tipo da conta do cliente(Comum/Plus): \n");
+    fgets(banco[*pos].tipo, TIPO_CONTA_MAX, stdin);
+    banco[*pos].tipo[strcspn(banco[*pos].tipo, "\n")] = '\0';
+  }
+  
   *pos += 1;
   Salvar(banco, pos);
   return OK;
@@ -116,6 +122,18 @@ ERROS Debito(Banco banco[], int *pos) {
     return NAO_ENCONTRADO;
   }
 
+  float taxaDebito, limiteDebito;
+
+  if(strcmp(banco[pos_DEBITO].tipo, "Plus")==0){
+    taxaDebito = 0.03;
+    limiteDebito = -5000;
+  }else if (strcmp(banco[pos_DEBITO].tipo, "Comum")==0){
+    taxaDebito = 0.05;
+    limiteDebito = -1000;
+  }else{
+    return TIPO_INCORRETO;
+  }
+    
   clearBuffer();
   char senha_debito[SENHA_MAX];
   printf("Digite a senha da conta do cliente: ");
@@ -130,11 +148,11 @@ ERROS Debito(Banco banco[], int *pos) {
   printf("Digite o valor a ser debitado da conta: ");
   scanf("%f", &valor_debitar);
 
-  if (valor_debitar > banco[pos_DEBITO].saldo) {
-    printf("Saldo insuficiente para realizar o débito\n");
+  if (limiteDebito > banco[pos_DEBITO].saldo - valor_debitar - valor_debitar*taxaDebito) {
+    printf("Limite insuficiente para realizar o débito\n");
     return OK;
   } 
-
+  valor_debitar+=valor_debitar*taxaDebito;
   banco[pos_DEBITO].saldo -= valor_debitar;
 
   printf("Débito de %.2f realizado com sucesso na conta do cliente %ld\n",
@@ -210,6 +228,16 @@ ERROS Transferencia(Banco banco[], int *pos) {
     printf("Cliente com CPF %ld não encontrado\n", cpf_transferencia_origem);
     return NAO_ENCONTRADO;
   }
+float limiteTransferencia, taxaTransferencia;
+  if(strcmp(banco[pos_transferencia_origem].tipo, "Plus")==0){
+    taxaTransferencia = 0.03;
+    limiteTransferencia = -5000;
+  }else if (strcmp(banco[pos_transferencia_origem].tipo, "Comum")==0){
+    taxaTransferencia = 0.05;
+    limiteTransferencia = -1000;
+  }else{
+    return TIPO_INCORRETO;
+  }
 
   long cpf_transferencia_destino;
   int pos_transferencia_destino = -1;
@@ -239,21 +267,20 @@ ERROS Transferencia(Banco banco[], int *pos) {
   }
 
   float valor_transferencia;
-  printf("Digite o valor a ser debitado da conta: ");
+  printf("Digite o valor a ser transferido da conta: ");
   scanf("%f", &valor_transferencia);
-
-  if (valor_transferencia > banco[pos_transferencia_origem].saldo) {
-    printf("Saldo insuficiente para realizar o débito\n");
+  if (limiteTransferencia > banco[pos_transferencia_origem].saldo - valor_transferencia - valor_transferencia*taxaTransferencia) {
+    printf("Limite insuficiente para realizar a transferencia\n");
     return OK;
   } 
-
-  banco[pos_transferencia_origem].saldo -= valor_transferencia;
+  
+  banco[pos_transferencia_origem].saldo -= valor_transferencia + valor_transferencia*taxaTransferencia;
   banco[pos_transferencia_destino].saldo += valor_transferencia;
 
   printf("Transferencia de %.2f realizado com sucesso da conta do cliente %ld para conta do cliente %ld\n",
     valor_transferencia, banco[pos_transferencia_origem].cpf,banco[pos_transferencia_destino].cpf);
 
-  SalvarExtrato(banco, pos,  cpf_transferencia_origem,  3,  valor_transferencia*(-1));
+  SalvarExtrato(banco, pos,  cpf_transferencia_origem,  3,  (valor_transferencia+ valor_transferencia*taxaTransferencia)*(-1));
   SalvarExtrato(banco, pos,  cpf_transferencia_destino,  3,  valor_transferencia);
   
   ERROS erro = Salvar(banco, pos);
@@ -429,6 +456,9 @@ void printErro(ERROS e) {
   case 9:
     printf("Senha Errada!\n");
     break;
+    case 10:
+      printf("Tipo registrado Incorreto!\n");
+      break;
   default:
     printf("Erro desconhecido!\n");
   }
