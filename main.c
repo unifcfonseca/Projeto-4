@@ -2,9 +2,7 @@
 #include <stdio.h>
 
 int main() {
-  funcao fs[] = {NovoCliente, DeletarCliente, ListarClientes,
-                 Debito,      Deposito,       Transferencia,
-                 Extrato,     Salvar,         Carregar};
+  funcao fs[] = {NovoCliente, DeletarCliente, ListarClientes, Debito, Deposito, Extrato, Transferencia, Salvar, Carregar};
 
   int pos, escolha;
   Banco banco[TOTAL];
@@ -77,7 +75,7 @@ int main() {
     }
   } while (escolha != 0);
 
-  erro = fs[escolha - 1](banco, &pos);
+  erro = fs[7](banco, &pos);
 
   return 0;
 }
