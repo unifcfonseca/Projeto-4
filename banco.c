@@ -145,7 +145,7 @@ ERROS Debito(Banco banco[], int *pos) {
     return erro;
   }
   
-  SalvarExtrato(banco, pos,  cpf_debito,  1,  valor_debitar);
+  SalvarExtrato(banco, pos,  cpf_debito,  1,  valor_debitar*(-1));
   return OK;
 }
 
@@ -158,7 +158,72 @@ ERROS Deposito(Banco banco[], int *pos) {
   return OK;
 }
 ERROS Transferencia(Banco banco[], int *pos) {
+  if (*pos == 0 || *pos == 1) {
+    return SEM_CLIENTES;
+  }
 
+  long cpf_transferencia_origem;
+  int pos_transferencia_origem = -1;
+  printf("Digite o CPF do cliente que vai transferir: ");
+  scanf("%ld", &cpf_transferencia_origem);
+
+  for (int i = 0; i < *pos; i++) {
+    if (banco[i].cpf == cpf_transferencia_origem) {
+        pos_transferencia_origem = i;
+      break;
+    }
+  }
+
+  if (pos_transferencia_origem == -1) {
+    printf("Cliente com CPF %ld não encontrado\n", cpf_transferencia_origem);
+    return NAO_ENCONTRADO;
+  }
+
+  long cpf_transferencia_destino;
+  int pos_transferencia_destino = -1;
+  printf("Digite o CPF do cliente que vai receber: ");
+  scanf("%ld", &cpf_transferencia_destino);
+
+  for (int i = 0; i < *pos; i++) {
+    if (banco[i].cpf == cpf_transferencia_destino) {
+          pos_transferencia_destino = i;
+      break;
+    }
+  }
+
+  if (pos_transferencia_destino == -1) {
+    printf("Cliente com CPF %ld não encontrado\n", cpf_transferencia_destino);
+    return NAO_ENCONTRADO;
+  }
+
+  clearBuffer();
+  char senha_transferencia[SENHA_MAX];
+  printf("Digite a senha do cpf %ld: ",cpf_transferencia_origem);
+  fgets(senha_transferencia, SENHA_MAX, stdin);
+    senha_transferencia[strcspn(senha_transferencia, "\n")] = '\0';
+
+  if(strcmp(senha_transferencia,banco[pos_transferencia_origem].senha)){
+    return SENHA_ERRADA;
+  }
+
+  float valor_transferencia;
+  printf("Digite o valor a ser debitado da conta: ");
+  scanf("%f", &valor_transferencia);
+
+  if (valor_transferencia > banco[pos_transferencia_origem].saldo) {
+    printf("Saldo insuficiente para realizar o débito\n");
+    return OK;
+  } 
+
+  banco[pos_transferencia_origem].saldo -= valor_transferencia;
+  banco[pos_transferencia_destino].saldo += valor_transferencia;
+
+  printf("Transferencia de %.2f realizado com sucesso da conta do cliente %ld para conta do cliente %ld\n",
+    valor_transferencia, banco[pos_transferencia_origem].cpf,banco[pos_transferencia_destino].cpf);
+
+  SalvarExtrato(banco, pos,  cpf_transferencia_origem,  3,  valor_transferencia*(-1));
+  SalvarExtrato(banco, pos,  cpf_transferencia_destino,  3,  valor_transferencia);
+  
   ERROS erro = Salvar(banco, pos);
   if (erro != OK) {
     return erro;
@@ -172,7 +237,7 @@ ERROS Extrato(Banco banco[], int *pos) {
 
   long cpf_EXTRATO;
   int pos_EXTRATO = -1;
-  printf("Digite o CPF do cliente para debitar: ");
+  printf("Digite o CPF do cliente para criar um arquivo de texto com os ultimos 100 extratos: ");
   scanf("%ld", &cpf_EXTRATO);
 
   for (int i = 0; i < *pos; i++) {
@@ -276,9 +341,6 @@ ERROS SalvarExtrato(Banco banco[], int *pos, long CPF, int Tipo, float Valor) {
       break;
     }
   }
-  
-  printf("aqui %d",banco[pos_salvar_extrato].pos_extratos);
-  
   if(banco[pos_salvar_extrato].pos_extratos == TOTAL_EXTRATOS){
     banco[pos_salvar_extrato].pos_extratos--;
     for (int i = 0; i < TOTAL_EXTRATOS - 1; i++) {
@@ -292,7 +354,6 @@ ERROS SalvarExtrato(Banco banco[], int *pos, long CPF, int Tipo, float Valor) {
     banco[pos_salvar_extrato].extrato[banco[pos_salvar_extrato].pos_extratos].Valor = Valor;
     strcpy(banco[pos_salvar_extrato].extrato[banco[pos_salvar_extrato].pos_extratos].Tipo,nomeTipo);
     banco[pos_salvar_extrato].pos_extratos++;
-    printf("aqui %d",banco[pos_salvar_extrato].pos_extratos);
   }
   
   return OK;
